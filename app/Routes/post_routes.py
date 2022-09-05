@@ -5,6 +5,7 @@ Routes for POSTS related operations
 """
 
 # Imports
+from typing import Optional
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, Response, status, APIRouter
 
@@ -22,7 +23,10 @@ router = APIRouter(prefix="/api/posts", tags=["Posts"])
 
 @router.get("/", response_model=list[posts_model.PostResponse])
 def get_posts(
-    database: Session = Depends(connect_to_postgres_db), limit: int = 10, skip: int = 0
+    database: Session = Depends(connect_to_postgres_db),
+    limit: int = 10,
+    skip: int = 0,
+    search: Optional[str] = "",
 ):
     """
     Return all posts.
@@ -36,7 +40,7 @@ def get_posts(
         list[dict]: all/limited posts
     """
     try:
-        posts = posts_model.get_all_posts(database, limit, skip)
+        posts = posts_model.get_all_posts(database, limit, skip, search)
         print("[API /posts] Fetched all posts")
         return posts
 

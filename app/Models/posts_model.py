@@ -95,7 +95,7 @@ def init_posts_model():
 # ---------------------------------------------------------------------------- #
 
 
-def get_all_posts(database: Session, limit: int, skip: int) -> List[Dict]:
+def get_all_posts(database: Session, limit: int, skip: int, search: str) -> List[Dict]:
     """
     Fetch list of all posts
 
@@ -103,11 +103,18 @@ def get_all_posts(database: Session, limit: int, skip: int) -> List[Dict]:
         database (Session): Database session
         limit (int): Number of posts to return
         skip (int): Number of posts to skip
+        search (str): Search query string
 
     Returns:
         list: Return list of posts
     """
-    return database.query(Post).limit(limit).offset(skip).all()
+    return (
+        database.query(Post)
+        .filter(Post.title.contains(search))
+        .limit(limit)
+        .offset(skip)
+        .all()
+    )
 
 
 def get_single_post(post_id: int, database: Session) -> Dict:
