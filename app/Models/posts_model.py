@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session, relationship
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 
 from app.Database import db
-from app.Models.users_model import UserResponse
+from app.Models.users_model import UserResponse, User
 
 # ---------------------------------------------------------------------------- #
 #                                 Model Schemas                                #
@@ -116,6 +116,7 @@ def get_single_post(post_id: int, database: Session) -> Dict:
 
     Args:
         post_id (int): Id of the required post
+        database (Session): Database session
 
     Returns:
         dict: Fetched post
@@ -128,12 +129,14 @@ def get_single_post(post_id: int, database: Session) -> Dict:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found!")
 
 
-def create_post(post, database, current_user):
+def create_post(post: Post, database: Session, current_user: User) -> Dict:
     """
     Create a new post
 
     Args:
         post (Post): New post data
+        database (Session): Database session
+        current_user (User): Current User object with info like ID
 
     Returns:
         dict: Update post data
@@ -148,12 +151,17 @@ def create_post(post, database, current_user):
     return inserted_post
 
 
-def update_post(post_id, post, database, current_user):
-    """Update a post
+def update_post(
+    post_id: int, post: Post, database: Session, current_user: User
+) -> Dict:
+    """
+    Update a post
 
     Args:
         post_id (int): Id of the post
         post (Post): Updated post data
+        database (Session): Database session
+        current_user (User): Current User object with info like ID
 
     Returns:
         dict: Updated post
@@ -180,7 +188,7 @@ def update_post(post_id, post, database, current_user):
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found!")
 
 
-def delete_post(post_id, database, current_user):
+def delete_post(post_id: int, database: Session, current_user: User) -> bool:
     """
     Delete a post
 
@@ -188,7 +196,7 @@ def delete_post(post_id, database, current_user):
         post_id (int): Id of the post
 
     Returns:
-        dict: Deleted post
+        bool: Post is deleted?
     """
     post_query = database.query(Post).filter(Post.id == post_id)
     existing_post = post_query.first()

@@ -24,6 +24,7 @@ app.include_router(auth_routes.router)
 #                               Universal Routes                               #
 # ---------------------------------------------------------------------------- #
 
+
 @app.get("/api/health")
 async def health():
     """

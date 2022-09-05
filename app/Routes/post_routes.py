@@ -22,9 +22,7 @@ router = APIRouter(prefix="/api/posts", tags=["Posts"])
 
 @router.get("/", response_model=list[posts_model.PostResponse])
 def get_posts(
-    database: Session = Depends(connect_to_postgres_db),
-    limit: int = 10,
-    skip: int = 0
+    database: Session = Depends(connect_to_postgres_db), limit: int = 10, skip: int = 0
 ):
     """
     Return all posts.
@@ -190,7 +188,9 @@ def update_post(
         dict: Response for updated post
     """
     try:
-        updated_post = posts_model.update_post(post_id, updated_post, database, current_user)
+        updated_post = posts_model.update_post(
+            post_id, updated_post, database, current_user
+        )
         return updated_post
 
     except HTTPException as error:
