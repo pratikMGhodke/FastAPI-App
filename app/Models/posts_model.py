@@ -9,7 +9,6 @@ from typing import Dict, List
 from pydantic import BaseModel
 from fastapi import HTTPException, status
 
-import sqlalchemy
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.orm import Session, relationship
@@ -75,19 +74,6 @@ class PostResponse(PostBase):
         """Configuration for the pydantic schema"""
 
         orm_mode = True  # This takes a SQLAlchemy response instead of dict[default]
-
-
-# ---------------------------------------------------------------------------- #
-
-
-def init_posts_model():
-    """Initialize connection to the database"""
-
-    try:
-        db.base.metadata.create_all(bind=db.engine)
-    except sqlalchemy.exc.OperationalError as err:
-        print("Error while intializing the POSTS table!")
-        print("MSG ==>", err)
 
 
 # ---------------------------------------------------------------------------- #

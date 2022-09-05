@@ -43,6 +43,7 @@ class User(db.base):
 #                          Pydantic request validators                         #
 # ---------------------------------------------------------------------------- #
 
+
 class UserCreate(BaseModel):
     """CREATE User request data validator"""
 
@@ -83,19 +84,6 @@ class TokenData(BaseModel):
     id: Optional[str]
 
 
-# # ---------------------------------------------------------------------------- #
-
-
-# def init_posts_model():
-#     """Initialize connection to the database"""
-
-#     try:
-#         db.base.metadata.create_all(bind=db.engine)
-#     except sqlalchemy.exc.OperationalError as err:
-#         print("Error while intializing the POSTS table!")
-#         print("MSG ==>", err)
-
-
 # ---------------------------------------------------------------------------- #
 #                                 DB Operations                                #
 # ---------------------------------------------------------------------------- #
@@ -116,10 +104,7 @@ def get_user(user_id, database):
     if user:
         return user
 
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="User not found!"
-    )
-
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found!")
 
 
 def get_user_by_email(creds, database):
@@ -137,7 +122,7 @@ def get_user_by_email(creds, database):
 
     except Exception as error:
         print("ERROR while getting user by email")
-        print(F"MEG ==> {get_user_by_email}")
+        print(f"MSG ==> {get_user_by_email}")
         raise SomethingWentWrongException(error) from error
 
 

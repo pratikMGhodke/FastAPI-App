@@ -19,6 +19,7 @@ from app.settings import settings
 # App Settings
 settings = settings.Settings()
 
+# Look on ENDPOINT for bearer tokens
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
