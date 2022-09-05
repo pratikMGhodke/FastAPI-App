@@ -1,0 +1,207 @@
+# pylint: disable=E0401, E0611, W0703, R0903
+
+"""
+Schema for incoming post requests data
+"""
+
+from datetime import datetime
+from typing import Dict, List
+from pydantic import BaseModel
+from fastapi import HTTPException, status
+
+import sqlalchemy
+from sqlalchemy.sql.expression import text
+from sqlalchemy.sql.sqltypes import TIMESTAMP
+from sqlalchemy.orm import Session, relationship
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+
+from app.Database import db
+from app.Models.users_model import UserResponse
+
+# ---------------------------------------------------------------------------- #
+#                                 Model Schemas                                #
+# ---------------------------------------------------------------------------- #
+
+# ------------------------------ Database Schema ----------------------------- #
+class Post(db.base):
+    """Schema for Posts table"""
+
+    __tablename__ = "posts"
+
+    # Columns
+    id = Column(Integer, primary_key=True, nullable=False)
+    title = Column(String, nullable=False)
+    content = Column(String, nullable=False)
+    published = Column(Boolean, server_default="TRUE", nullable=False)
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
+    updated_at = Column(TIMESTAMP(timezone=True), server_default=text("NULL"))
+    owner_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    owner = relationship("User")
+
+
+# ---------------------------------------------------------------------------- #
+#                          Pydantic request validators                         #
+# ---------------------------------------------------------------------------- #
+class PostBase(BaseModel):
+    """Data validation for POSTS"""
+
+    title: str
+    content: str
+    published: bool = True
+
+
+class PostCreate(PostBase):
+    """CREATE Post request data validator"""
+
+
+class PostUpdate(PostBase):
+    """UPDATE Post request data validator"""
+
+
+class PostResponse(PostBase):
+    """RESPONSE data validator"""
+
+    id: int
+    owner_id: int
+    created_at: datetime
+    updated_at: datetime | None
+    owner: UserResponse
+
+    class Config:
+        """Configuration for the pydantic schema"""
+
+        orm_mode = True  # This takes a SQLAlchemy response instead of dict[default]
+
+
+# ---------------------------------------------------------------------------- #
+
+
+def init_posts_model():
+    """Initialize connection to the database"""
+
+    try:
+        db.base.metadata.create_all(bind=db.engine)
+    except sqlalchemy.exc.OperationalError as err:
+        print("Error while intializing the POSTS table!")
+        print("MSG ==>", err)
+
+
+# ---------------------------------------------------------------------------- #
+#                                 DB Operations                                #
+# ---------------------------------------------------------------------------- #
+
+
+def get_all_posts(database: Session, limit: int, skip: int) -> List[Dict]:
+    """
+    Fetch list of all posts
+
+    Args:
+        database (Session): Database session
+        limit (int): Number of posts to return
+        skip (int): Number of posts to skip
+
+    Returns:
+        list: Return list of posts
+    """
+    return database.query(Post).limit(limit).offset(skip).all()
+
+
+def get_single_post(post_id: int, database: Session) -> Dict:
+    """
+    Get a single post with given post_id
+
+    Args:
+        post_id (int): Id of the required post
+
+    Returns:
+        dict: Fetched post
+    """
+    post = database.query(Post).filter(Post.id == post_id).first()
+
+    if post:
+        return post
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found!")
+
+
+def create_post(post, database, current_user):
+    """
+    Create a new post
+
+    Args:
+        post (Post): New post data
+
+    Returns:
+        dict: Update post data
+    """
+    inserted_post = Post(owner_id=current_user.id, **post.dict())
+
+    database.add(inserted_post)
+    database.commit()
+    database.refresh(inserted_post)
+
+    print("Post is created!")
+    return inserted_post
+
+
+def update_post(post_id, post, database, current_user):
+    """Update a post
+
+    Args:
+        post_id (int): Id of the post
+        post (Post): Updated post data
+
+    Returns:
+        dict: Updated post
+    """
+    post_query = database.query(Post).filter(Post.id == post_id)
+    existing_post = post_query.first()
+
+    if existing_post:
+        if existing_post.owner_id != current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to perform requested operation",
+            )
+        post_query.update(
+            {**post.dict(), **{"updated_at": "now()"}}, synchronize_session=False
+        )
+
+    database.commit()
+    updated_post = post_query.first()
+
+    if updated_post:
+        return post_query.first()
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found!")
+
+
+def delete_post(post_id, database, current_user):
+    """
+    Delete a post
+
+    Args:
+        post_id (int): Id of the post
+
+    Returns:
+        dict: Deleted post
+    """
+    post_query = database.query(Post).filter(Post.id == post_id)
+    existing_post = post_query.first()
+
+    if existing_post:
+        if existing_post.owner_id != current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to perform requested operation",
+            )
+
+        post_query.delete(synchronize_session=False)
+        database.commit()
+        return True
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found!")

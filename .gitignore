@@ -1,0 +1,7 @@
+# Cache
+.vscode
+venv
+__pycache__
+
+# Files
+TODO.py
