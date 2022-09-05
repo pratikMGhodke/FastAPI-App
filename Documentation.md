@@ -1,11 +1,9 @@
-
-
-
-
 # FastAPI Application Documentation
+
 This is an API application developed in Python's FastAPI. It used postgresql as database.
 
 This application has below functionalities-
+
 1. Create/update/delete/view a post.
 2. View all posts from all users.
 3. View single post from any user.
@@ -15,14 +13,17 @@ This application has below functionalities-
 7. Validate the request and response paylaods to get only required fields and in declared format only. Otherwise error response will be sent.
 
 ## Healthcheck
-```
+
+```none
 Endpoint    : GET /api/health
 Description : Check if an API is online or not
 Returns     : "OK"
 ```
 
 ## Connecting to the database
+
 We are using SQLAlchemy for dealing with databases. We create a session to do database operations. For every API call we give this session object to the process as dependency and close the session as process closes.
+
 ```python
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -67,7 +68,8 @@ def get_user(user_id: int, database: Session = Depends(connect_to_postgres_db)):
 
 ## Users
 
-#### Schemas
+### User Schemas
+
 ```python
 # Postgresql "Users" Model
 *id
@@ -90,7 +92,8 @@ updated_at
 ```
 
 #### Create a New User
-```
+
+```none
 Endpoint    : POST /api/users
 Description : Create a new user.
 Body        :
@@ -113,6 +116,7 @@ Error Resp  : [409 Conflict]
 ```
 
 Hash The Password
+
 ```python
 from passlib.context import CryptContext
 
@@ -122,7 +126,8 @@ return pwd_context.hash(password)
 ```
 
 #### Get a user
-```
+
+```none
 Endpoint    : GET /api/users/<id>
 Description : Get a user by id. [*testing functionality]
 
@@ -141,8 +146,9 @@ Error Resp  : [404 Not Found]
 
 ## Authentication
 
-#### Login User
-```
+### Login User
+
+```none
 Endpoint    : POST /api/login/
 Description : Login User
 
@@ -163,11 +169,13 @@ Error Resp  : [403 Forbidden]
 ```
 
 Verify Password
+
 ```python
 pwd_context.verify(plain_pass, hashed_pass)
 ```
 
 Generating JWT Token
+
 ```python
 from fastapi.security.oauth2 import OAuth2PasswordBearer
 
@@ -183,6 +191,7 @@ return jwt.encode(
 ```
 
 Verify JWT Token, parse it and return user_id from it
+
 ```python
 
 credentials_exceptions = HTTPException(
@@ -212,7 +221,8 @@ def verify_access_token(token: str, credentials_exceptions):
 
 ## Posts
 
-#### Schemas
+### Post Schemas
+
 ```python
 # Postgresql "Posts" Model
 from sqlalchemy.orm import relationship
@@ -248,6 +258,7 @@ owner = relationship("User")
 ```
 
 Using JWT to verify logged in user's authentication as dependency.
+
 ```python
 from app.Utils import oauth2
 
@@ -261,7 +272,8 @@ def get_posts(
 ```
 
 #### Create a post
-```
+
+```none
 Endpoint    : POST /api/posts/
 Description : Create a Post
 Bearer Auth : JWT_token
@@ -295,7 +307,8 @@ Error Resp  : [401 Unauthorized]
 ```
 
 #### Update a post
-```
+
+```none
 Endpoint    : PUT /api/posts/<id>
 Description : Update a Post
 Bearer Auth : JWT_token
@@ -333,7 +346,8 @@ Error Resp  : [404 Not Found]
 ```
 
 #### Delete a post
-```
+
+```none
 Endpoint    : DELETE /api/posts/<id>
 Description : Delete a Post
 Bearer Auth : JWT_token
@@ -350,9 +364,9 @@ Error Resp  : [404 Not Found]
 }
 ```
 
-
 #### Get a post
-```
+
+```none
 Endpoint    : GET /api/posts/<id>
 Description : Get a Post
 Returns     : [200 OK]
@@ -378,7 +392,8 @@ Error Resp  : [404 Not Found]
 ```
 
 #### Get all post
-```
+
+```none
 Endpoint    : GET /api/posts/
 Description : Get all Post
 Returns     : [200 OK]
@@ -420,8 +435,10 @@ Error Resp  : [404 Not Found]
 ```
 
 ## NOT Found
+
 Resoponse
-```
+
+```none
 Resp  : [404 Not Found]
 {
     "detail": "Not Found"
