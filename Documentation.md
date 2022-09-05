@@ -434,9 +434,21 @@ Error Resp  : [404 Not Found]
 }
 ```
 
+
+#### Pagination and string based searching
+
+Query params
+1. limit: Number of results to return.
+2. skip: Number of results to skip.
+3. search: Search for given string in the records.
+
+```none
+Endpoint    : GET /api/posts/?limit=10&size=2?search="beach"
+```
+
 ## NOT Found
 
-Resoponse
+Response
 
 ```none
 Resp  : [404 Not Found]
