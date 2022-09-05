@@ -14,7 +14,10 @@ from fastapi.security.oauth2 import OAuth2PasswordBearer
 
 from app.Database import db
 from app.Models import users_model
-from app.Constants import constants
+from app.settings import settings
+
+# App Settings
+settings = settings.Settings()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -32,11 +35,13 @@ def create_access_token(data: dict):
 
     to_encode = data.copy()
 
-    expire = datetime.utcnow() + timedelta(minutes=constants.ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.utcnow() + timedelta(
+        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+    )
     to_encode.update({"exp": expire})
 
     return jwt.encode(
-        to_encode, constants.JWT_SECRET_KEY, algorithm=constants.JWT_ALOGORITHM
+        to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALOGORITHM
     )
 
 
@@ -53,7 +58,7 @@ def verify_access_token(token: str, credentials_exceptions):
     """
     try:
         payload = jwt.decode(
-            token, constants.JWT_SECRET_KEY, algorithms=constants.JWT_ALOGORITHM
+            token, settings.JWT_SECRET_KEY, algorithms=settings.JWT_ALOGORITHM
         )
 
         user_id: str = payload.get("user_id")
@@ -87,4 +92,6 @@ def get_current_user(
     )
 
     token = verify_access_token(token, credentials_exceptions)
-    return database.query(users_model.User).filter(users_model.User.id == token.id).first()
+    return (
+        database.query(users_model.User).filter(users_model.User.id == token.id).first()
+    )

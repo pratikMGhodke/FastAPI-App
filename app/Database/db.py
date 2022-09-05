@@ -11,13 +11,16 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-from app.Constants import constants
+from app.settings import settings
+
+# App Settings
+settings = settings.Settings()
 
 # Constants
-USER = constants.POSTGRES_USER
-PASS = constants.POSTGRES_PASSWORD
-HOST = constants.POSTGRES_HOST
-DATABASE = constants.DATABASE
+USER = settings.POSTGRES_USER
+PASS = settings.POSTGRES_PASSWORD
+HOST = settings.POSTGRES_HOST
+DATABASE = settings.DATABASE
 
 SQLALCHEMY_DATABASE_URL = f"postgresql://{USER}:{PASS}@{HOST}/{DATABASE}"
 

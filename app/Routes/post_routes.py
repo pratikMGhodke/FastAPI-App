@@ -36,6 +36,7 @@ def get_posts(
             Postgres db session object. Defaults to Depends(connect_to_postgres_db).
         limit (int): Number of posts to be shown
         skip (int): Number of posts to be skipped
+        search (str, Optional): Search string
     Returns:
         list[dict]: all/limited posts
     """
