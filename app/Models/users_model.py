@@ -83,17 +83,17 @@ class TokenData(BaseModel):
     id: Optional[str]
 
 
-# ---------------------------------------------------------------------------- #
+# # ---------------------------------------------------------------------------- #
 
 
-def init_posts_model():
-    """Initialize connection to the database"""
+# def init_posts_model():
+#     """Initialize connection to the database"""
 
-    try:
-        db.base.metadata.create_all(bind=db.engine)
-    except sqlalchemy.exc.OperationalError as err:
-        print("Error while intializing the POSTS table!")
-        print("MSG ==>", err)
+#     try:
+#         db.base.metadata.create_all(bind=db.engine)
+#     except sqlalchemy.exc.OperationalError as err:
+#         print("Error while intializing the POSTS table!")
+#         print("MSG ==>", err)
 
 
 # ---------------------------------------------------------------------------- #
@@ -161,10 +161,11 @@ def create_user(user, database):
 
         if inserted_user:
             return inserted_user
+        return None
 
-    except sqlalchemy.exc.IntegrityError:
+    except sqlalchemy.exc.IntegrityError as error:
         print(f'User with "email={user.email}" already exists!')
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="User already exists!",
-        )
+        ) from error
