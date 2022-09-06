@@ -456,3 +456,71 @@ Resp  : [404 Not Found]
     "detail": "Not Found"
 }
 ```
+
+
+## Votes
+
+### Vote Schemas
+
+```python
+# Postgresql "Posts" Model
+from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey
+
+*post_id: ForeignKey("posts.id", ondelete="CASCADE")
+*user_id: ForeignKey("users.id", ondelete="CASCADE")
+liked_at
+
+
+# Data Validators (pydantic)
+# 1. Vote Request
+    post_id: int
+    dir: int
+
+    @validator("dir")
+    def validate_vote_type(cls, val):
+        """ Validate vote type """
+        if val not in [0, 1]:
+            raise ValueError("Vote type should be either 0 or 1!")
+        return val
+```
+#### Add/remove a vote
+
+```none
+Endpoint    : GET /api/vote/
+Description : Add/remove a vote on a post
+Bearer Auth : JWT_token
+Body        :
+{
+    "psot_id": 19,
+    "dir": 0|1
+}
+
+# User_id is extracted from the JWT_TOKEN
+
+Returns     : [200 OK]
+{
+    "title": "Updated this post as well",
+    "content": "This is my first post. Its amazing!",
+    "published": true,
+    "id": 7,
+    "owner_id": 1,
+    "created_at": "2022-08-28T11:07:17.219483+05:30",
+    "updated_at": "2022-08-28T11:11:34.686644+05:30",
+    "owner": {
+        "id": 1,
+        "email": "piyush123.user@email.com",
+        "created_at": "2022-08-17T23:09:01.482465+05:30"
+    }
+}
+
+Error Resp  : [401 Unauthorized]
+{
+    "detail": "Not authenticated"
+}
+
+Error Resp  :
+[404 Not Found] : { "detail": "Post does not exists!" }
+[409 conflict]  : { "detail": "Cannot vote already voted post!" }
+[409 conflict]  : { "detail": "Cannot down-vote a not voted this post!" }
+```
