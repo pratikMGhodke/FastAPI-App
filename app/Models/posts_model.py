@@ -77,6 +77,14 @@ class PostResponse(PostBase):
 
 
 # ---------------------------------------------------------------------------- #
+#                                Helper Functions                              #
+# ---------------------------------------------------------------------------- #
+def check_if_post_exists(database: Session, post_id: int):
+    """Check if post with given post_id exists"""
+    return database.query(Post).filter(Post.id == post_id).first()
+
+
+# ---------------------------------------------------------------------------- #
 #                                 DB Operations                                #
 # ---------------------------------------------------------------------------- #
 

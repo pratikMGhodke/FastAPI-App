@@ -14,6 +14,7 @@ from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy import Column, ForeignKey, Integer
 
 from app.Database import db
+from app.Models.posts_model import check_if_post_exists
 from app.Models.users_model import User
 
 # ---------------------------------------------------------------------------- #
@@ -61,7 +62,6 @@ class VoteRequest(BaseModel):
 #                                 DB Operations                                #
 # ---------------------------------------------------------------------------- #
 
-
 def update_vote(vote: VoteRequest, database: Session, current_user: User):
     """
     Update a vote for post
@@ -76,6 +76,14 @@ def update_vote(vote: VoteRequest, database: Session, current_user: User):
     """
     post_id = vote.post_id
     user_id = current_user.id
+
+    # Check if post exists
+    post = check_if_post_exists(database, post_id)
+
+    if not post:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Post does not exists!"
+        )
 
     vote_query = database.query(Vote).filter(
         Vote.post_id == post_id, Vote.user_id == user_id
@@ -96,7 +104,7 @@ def update_vote(vote: VoteRequest, database: Session, current_user: User):
 
     if not found_vote:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Cannot Down Vote a not voted this post!"
+            status_code=status.HTTP_409_CONFLICT, detail="Cannot down-vote a not voted this post!"
         )
 
     vote_query.delete(synchronize_session=False)
