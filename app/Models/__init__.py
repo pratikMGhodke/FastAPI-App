@@ -8,7 +8,9 @@ Initialize and create tables in DB (postgres)
 import sqlalchemy
 from app.Database import db
 
+# trunk-ignore(flake8/F401)
 from . import posts_model, users_model, votes_model
+
 
 def init_models():
     """Initialize tables in the database"""
@@ -18,5 +20,6 @@ def init_models():
     except sqlalchemy.exc.OperationalError as err:
         print("Error while intializing the POSTS table!")
         print("MSG ==>", err)
+
 
 init_models()

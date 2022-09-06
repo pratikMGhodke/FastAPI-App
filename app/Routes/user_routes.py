@@ -12,7 +12,7 @@ from app.Models import users_model
 from app.Database.db import connect_to_postgres_db
 
 # FastAPI Router
-router = APIRouter(prefix="/users", tags=["Users"])
+router = APIRouter(prefix="/api/users", tags=["Users"])
 
 # ---------------------------------------------------------------------------- #
 #                                    Routes                                    #

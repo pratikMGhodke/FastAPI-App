@@ -50,7 +50,7 @@ class PostBase(BaseModel):
 
     title: str
     content: str
-    published: bool = True
+    published: bool = False
 
 
 class PostCreate(PostBase):

@@ -6,7 +6,7 @@ FastAPI API application
 
 # imports
 from fastapi import FastAPI
-from app.Routes import post_routes, user_routes, auth_routes
+from app.Routes import post_routes, user_routes, auth_routes, vote_routes
 
 # Init API
 app = FastAPI()
@@ -15,6 +15,7 @@ app = FastAPI()
 app.include_router(post_routes.router)
 app.include_router(user_routes.router)
 app.include_router(auth_routes.router)
+app.include_router(vote_routes.router)
 
 # ---------------------------------------------------------------------------- #
 #                               Universal Routes                               #
