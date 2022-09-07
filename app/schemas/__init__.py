@@ -9,8 +9,7 @@ import sqlalchemy
 from app.Database import db
 
 # trunk-ignore(flake8/F401)
-from . import posts_model, users_model, votes_model
-
+from . import posts_schema, users_schema, votes_schema
 
 def init_models():
     """Initialize tables in the database"""
