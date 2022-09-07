@@ -18,7 +18,7 @@ def init_models():
     try:
         db.base.metadata.create_all(bind=db.engine)
     except sqlalchemy.exc.OperationalError as err:
-        print("Error while intializing the POSTS table!")
+        print("Error while intializing the database table!")
         print("MSG ==>", err)
 
 

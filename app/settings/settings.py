@@ -15,12 +15,12 @@ class Settings(BaseSettings):
     POSTGRES_PORT: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
-    
+
     # Database
     DATABASE: str
     POSTS_TABLE: str
     USERS_TABLE: str
-    
+
     # JWT
     JWT_SECRET_KEY: str
     JWT_ALOGORITHM: str
