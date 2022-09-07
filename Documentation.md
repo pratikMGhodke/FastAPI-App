@@ -66,6 +66,76 @@ def get_user(user_id: int, database: Session = Depends(connect_to_postgres_db)):
     return user
 ```
 
+## Alembic
+[Alembic](https://alembic.sqlalchemy.org/en/latest/) is a database migration tool which manages upgrading and downgrading of the databases. This includes adding columns, removing columns, altering column definitions.
+
+Installation
+> pip install alembic
+
+
+Update `env.py` file to add database URI
+```python
+from app.schemas import db # required!
+from app.settings import settings
+
+settings = settings.Settings()
+
+USER = settings.POSTGRES_USER
+PASS = settings.POSTGRES_PASSWORD
+HOST = settings.POSTGRES_HOST
+DATABASE = settings.DATABASE
+
+config.set_main_option("sqlalchemy.url", f"postgresql://{USER}:{PASS}@{HOST}/{DATABASE}")
+```
+
+Create a revision - create a stage which includes definition for what are the upgragdes and downgrades.
+> alembic revision -m "message"
+   ```python
+    """create posts table
+
+    Revision ID: ec09e85e2ad6
+    Revises: 
+    Create Date: 2022-09-07 17:32:13.508288
+
+    """
+    from alembic import op
+    import sqlalchemy as sa
+
+
+    # revision identifiers, used by Alembic.
+    revision = 'ec09e85e2ad6'
+    down_revision = None
+    branch_labels = None
+    depends_on = None
+
+
+    # Manual Implementations
+    def upgrade() -> None:
+        op.create_table('posts', )
+        pass
+
+
+    def downgrade() -> None:
+        op.drop_table('posts')
+        pass
+
+    ```
+
+Show current revision number
+> alembic current
+
+Show latest revision number
+> alembic head
+
+Upgrade revision
+> alembic upgrade revision_number <br>
+> alembic upgrade +1|+2 <br>
+
+Downgrade revision
+> alembic downgrade revision_number <br>
+> alembic downgrade -1|-2 <br>
+
+
 ## Users
 
 ### User Schemas
