@@ -19,7 +19,7 @@ PASS = settings.POSTGRES_PASSWORD
 HOST = settings.POSTGRES_HOST
 DATABASE = settings.DATABASE
 
-config.set_main_option("sqlalchemy.url", f"postgresql://{USER}:{PASS}@{HOST}/{DATABASE}")
+config.set_main_option("sqlalchemy.url", f"postgresql+psycopg2://{USER}:{PASS}@{HOST}/{DATABASE}")
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
