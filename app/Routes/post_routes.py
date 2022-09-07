@@ -95,7 +95,7 @@ def get_post(
 @router.post(
     "/",
     status_code=status.HTTP_201_CREATED,
-    response_model=posts_schema.PostResponse,
+    response_model=posts_schema.PostData,
 )
 def create_post(
     new_post: posts_schema.PostCreate,
@@ -170,7 +170,7 @@ def delete_post(
         )
 
 
-@router.put("/{post_id}", response_model=posts_schema.PostResponse)
+@router.put("/{post_id}", response_model=posts_schema.PostData)
 def update_post(
     post_id: int,
     updated_post: posts_schema.PostUpdate,

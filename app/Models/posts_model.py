@@ -7,10 +7,13 @@ Database operations for Posts
 from typing import Dict, List
 from fastapi import HTTPException, status
 
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.schemas.posts_schema import Post
 from app.Models.users_model import User
+from app.schemas.posts_schema import Post
+from app.schemas.votes_schema import Vote
+
 # from app.Models.votes_model import Vote
 
 # ---------------------------------------------------------------------------- #
@@ -39,10 +42,10 @@ def get_all_posts(database: Session, limit: int, skip: int, search: str) -> List
     Returns:
         list: Return list of posts
     """
-    # results = database.query(Post).join(Vote, Post.id == Vote.post_id, isouter=True)
-    # print(results)
     return (
-        database.query(Post)
+        database.query(Post, func.count(Vote.post_id).label("votes"))
+        .join(Vote, Post.id == Vote.post_id, isouter=True)
+        .group_by(Post.id)
         .filter(Post.title.contains(search))
         .limit(limit)
         .offset(skip)
@@ -61,7 +64,13 @@ def get_single_post(post_id: int, database: Session) -> Dict:
     Returns:
         dict: Fetched post
     """
-    post = database.query(Post).filter(Post.id == post_id).first()
+    post = (
+        database.query(Post, func.count(Vote.post_id).label("votes"))
+        .join(Vote, Post.id == Vote.post_id, isouter=True)
+        .group_by(Post.id)
+        .filter(Post.id == post_id)
+        .first()
+    )
 
     if post:
         return post

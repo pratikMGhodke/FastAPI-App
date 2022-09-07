@@ -61,14 +61,26 @@ class PostUpdate(PostBase):
     """UPDATE Post request data validator"""
 
 
-class PostResponse(PostBase):
-    """RESPONSE data validator"""
+class PostData(PostBase):
+    """Post data fetched from database along with joins data validator"""
 
     id: int
     owner_id: int
     created_at: datetime
     updated_at: datetime | None
     owner: UserResponse
+
+    class Config:
+        """Configuration for the pydantic schema"""
+
+        orm_mode = True  # This takes a SQLAlchemy response instead of dict[default]
+
+
+class PostResponse(BaseModel):
+    """RESPONSE data validator"""
+
+    Post: PostData
+    votes: int
 
     class Config:
         """Configuration for the pydantic schema"""
