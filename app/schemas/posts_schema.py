@@ -81,8 +81,3 @@ class PostResponse(BaseModel):
 
     Post: PostData
     votes: int
-
-    class Config:
-        """Configuration for the pydantic schema"""
-
-        orm_mode = True  # This takes a SQLAlchemy response instead of dict[default]
