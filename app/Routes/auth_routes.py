@@ -11,6 +11,7 @@ from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 
 from app.Utils import crypt, oauth2
 from app.Models import users_model
+from app.schemas import users_schema
 from app.Database.db import connect_to_postgres_db
 from app.Exceptions.post_exceptions import SomethingWentWrongException
 
@@ -23,7 +24,7 @@ router = APIRouter(tags=["Authentication"])
 # ---------------------------------------------------------------------------- #
 
 
-@router.post("/api/login", response_model=users_model.AuthToken)
+@router.post("/api/login", response_model=users_schema.AuthToken)
 def login(
     creds: OAuth2PasswordRequestForm = Depends(),
     database: Session = Depends(connect_to_postgres_db)

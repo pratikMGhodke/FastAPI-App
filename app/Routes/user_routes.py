@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status, APIRouter
 
 from app.Models import users_model
+from app.schemas import users_schema
 from app.Database.db import connect_to_postgres_db
 
 # FastAPI Router
@@ -19,7 +20,7 @@ router = APIRouter(prefix="/api/users", tags=["Users"])
 # ---------------------------------------------------------------------------- #
 
 
-@router.get("/{user_id}", response_model=users_model.UserResponse)
+@router.get("/{user_id}", response_model=users_schema.UserResponse)
 def get_user(user_id: int, database: Session = Depends(connect_to_postgres_db)):
     """Return user info
 
@@ -56,17 +57,17 @@ def get_user(user_id: int, database: Session = Depends(connect_to_postgres_db)):
 @router.post(
     "/",
     status_code=status.HTTP_201_CREATED,
-    response_model=users_model.UserResponse,
+    response_model=users_schema.UserResponse,
 )
 def create_user(
-    new_user: users_model.UserCreate,
+    new_user: users_schema.UserCreate,
     database: Session = Depends(connect_to_postgres_db),
 ):
     """
     Create a new user
 
     Args:
-        new_user (users_model.UserCreate): User request data validator
+        new_user (users_schema.UserCreate): User request data validator
 
         database (Session, optional):
             Postgres db session object. Defaults to Depends(connect_to_postgres_db).
