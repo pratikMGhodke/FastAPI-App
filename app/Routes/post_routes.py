@@ -11,6 +11,7 @@ from fastapi import Depends, HTTPException, Response, status, APIRouter
 
 from app.Utils import oauth2
 from app.Models import posts_model
+from app.schemas import posts_schema
 from app.Database.db import connect_to_postgres_db
 
 # FastAPI Router
@@ -21,7 +22,7 @@ router = APIRouter(prefix="/api/posts", tags=["Posts"])
 # ---------------------------------------------------------------------------- #
 
 
-@router.get("/", response_model=list[posts_model.PostResponse])
+@router.get("/", response_model=list[posts_schema.PostResponse])
 def get_posts(
     database: Session = Depends(connect_to_postgres_db),
     limit: int = 10,
@@ -54,7 +55,7 @@ def get_posts(
         )
 
 
-@router.get("/{post_id}", response_model=posts_model.PostResponse)
+@router.get("/{post_id}", response_model=posts_schema.PostResponse)
 def get_post(
     post_id: int,
     database: Session = Depends(connect_to_postgres_db),
@@ -94,10 +95,10 @@ def get_post(
 @router.post(
     "/",
     status_code=status.HTTP_201_CREATED,
-    response_model=posts_model.PostResponse,
+    response_model=posts_schema.PostResponse,
 )
 def create_post(
-    new_post: posts_model.PostCreate,
+    new_post: posts_schema.PostCreate,
     database: Session = Depends(connect_to_postgres_db),
     current_user: int = Depends(oauth2.get_current_user),
 ):
@@ -105,7 +106,7 @@ def create_post(
     Create a new post
 
     Args:
-        new_post (posts_model.PostCreate): New post data contents
+        new_post (posts_schema.PostCreate): New post data contents
 
         database (Session, optional):
             Postgres db session object. Defaults to Depends(connect_to_postgres_db).
@@ -169,10 +170,10 @@ def delete_post(
         )
 
 
-@router.put("/{post_id}", response_model=posts_model.PostResponse)
+@router.put("/{post_id}", response_model=posts_schema.PostResponse)
 def update_post(
     post_id: int,
-    updated_post: posts_model.PostUpdate,
+    updated_post: posts_schema.PostUpdate,
     database: Session = Depends(connect_to_postgres_db),
     current_user: int = Depends(oauth2.get_current_user),
 ):
@@ -181,7 +182,7 @@ def update_post(
 
     Args:
         post_id (int): Id of the post
-        updated_post (posts_model.PostUpdate): Post update data field(s) + original fields
+        updated_post (posts_schema.PostUpdate): Post update data field(s) + original fields
 
         database (Session, optional):
             Postgres db session object. Defaults to Depends(connect_to_postgres_db).
