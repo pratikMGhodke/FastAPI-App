@@ -244,7 +244,7 @@ owner = relationship("User")
     content: str
     published: bool = True
 
-# 2. Post GET request response
+# 2. Post GET request response with post & user data only (create and update operation responses)
     id: int
     owner_id: int
     created_at: datetime
@@ -255,6 +255,12 @@ owner = relationship("User")
         """Configuration for the pydantic schema"""
 
         orm_mode = True  # This takes a SQLAlchemy response instead of dict[default]
+
+
+# 3. Post GET request response with votes
+    Post: PostData  # ----> From (2.)
+    votes: int
+
 ```
 
 Using JWT to verify logged in user's authentication as dependency.
