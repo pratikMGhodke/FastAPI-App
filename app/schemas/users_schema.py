@@ -78,4 +78,3 @@ class TokenData(BaseModel):
     """Data to create the access token validator"""
 
     id: Optional[str]
-

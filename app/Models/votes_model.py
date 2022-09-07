@@ -5,58 +5,12 @@ Schema for incoming post requests data
 """
 
 # Imports
-from fastapi import HTTPException, status
-from pydantic import BaseModel, validator
-
 from sqlalchemy.orm import Session
-from sqlalchemy.sql.expression import text
-from sqlalchemy.sql.sqltypes import TIMESTAMP
-from sqlalchemy import Column, ForeignKey, Integer
+from fastapi import HTTPException, status
 
-from app.Database import db
+from app.schemas.users_schema import User
+from app.schemas.votes_schema import Vote, VoteRequest
 from app.Models.posts_model import check_if_post_exists
-from app.Models.users_model import User
-
-# ---------------------------------------------------------------------------- #
-#                                 Model Schemas                                #
-# ---------------------------------------------------------------------------- #
-
-# ------------------------------ Database Schema ----------------------------- #
-class Vote(db.base):
-    """Schema for Posts table"""
-
-    __tablename__ = "votes"
-
-    # Columns
-    post_id = Column(
-        Integer, ForeignKey("posts.id", ondelete="CASCADE"), primary_key=True
-    )
-    user_id = Column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
-    )
-    liked_at = Column(
-        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
-    )
-
-
-# ---------------------------------------------------------------------------- #
-#                          Pydantic request validators                         #
-# ---------------------------------------------------------------------------- #
-
-
-class VoteRequest(BaseModel):
-    """Vote request validator"""
-
-    post_id: int
-    dir: int
-
-    @validator("dir")
-    def validate_vote_type(cls, val):
-        """ Validate vote type """
-        if val not in [0, 1]:
-            raise ValueError("Vote type should be either 0 or 1!")
-        return val
-
 
 # ---------------------------------------------------------------------------- #
 #                                 DB Operations                                #

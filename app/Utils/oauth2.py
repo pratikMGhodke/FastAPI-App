@@ -13,7 +13,7 @@ from fastapi import Depends, status, HTTPException
 from fastapi.security.oauth2 import OAuth2PasswordBearer
 
 from app.Database import db
-from app.Models import users_model
+from app.schemas import users_schema
 from app.settings import settings
 
 # App Settings
@@ -55,7 +55,7 @@ def verify_access_token(token: str, credentials_exceptions):
         credentials_exceptions (Exception): Exception to raise for unauthorization
 
     Returns:
-        app.Models.users_model.TokenData: Decoded token data (user_id)
+        app.Models.users_schema.TokenData: Decoded token data (user_id)
     """
     try:
         payload = jwt.decode(
@@ -67,7 +67,7 @@ def verify_access_token(token: str, credentials_exceptions):
         if user_id is None:
             raise credentials_exceptions
 
-        token_data = users_model.TokenData(id=user_id)
+        token_data = users_schema.TokenData(id=user_id)
         return token_data
 
     except JWTError as error:
@@ -94,5 +94,5 @@ def get_current_user(
 
     token = verify_access_token(token, credentials_exceptions)
     return (
-        database.query(users_model.User).filter(users_model.User.id == token.id).first()
+        database.query(users_schema.User).filter(users_schema.User.id == token.id).first()
     )

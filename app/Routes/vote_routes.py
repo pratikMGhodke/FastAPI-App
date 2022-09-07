@@ -10,6 +10,7 @@ from fastapi import Depends, HTTPException, status, APIRouter
 
 from app.Utils import oauth2
 from app.Models import votes_model
+from app.schemas import votes_schema
 from app.Database.db import connect_to_postgres_db
 
 # FastAPI Router
@@ -22,7 +23,7 @@ router = APIRouter(prefix="/api/vote", tags=["Votes"])
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def add_vote(
-    vote: votes_model.VoteRequest,
+    vote: votes_schema.VoteRequest,
     database: Session = Depends(connect_to_postgres_db),
     current_user: int = Depends(oauth2.get_current_user),
 ):
@@ -30,7 +31,7 @@ def add_vote(
     Update a vote for post
 
     Args:
-        vote (votes_model.VoteRequest): Vote info
+        vote (votes_schema.VoteRequest): Vote info
         database (Session, optional):
             Postgres db session object. Defaults to Depends(connect_to_postgres_db).
         current_user (int): Logged in user ID
