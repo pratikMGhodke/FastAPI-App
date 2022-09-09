@@ -1,4 +1,5 @@
 
+
 # Deployments
 
 ## Heroku
@@ -11,23 +12,26 @@
 	This will present an popup browser tab to confirm the login.
 4. Update heroku to the latest version
 	> heorku --update
-5. Create an application on heroku. This will add a remote repo to local repo.
+5. Add a `Procfile` with below contents which shows heroku how to run the API application.
+	> web: uvicorn app.main:app --host=0.0.0.0 --port=${PORT:-5000}
+
+6. Create an application on heroku. This will add a remote repo to local repo.
 	> heroku create demo-fastapi-app<br>
 	
 	List apps present on the heroku
 	> heroku apps
-6. Push remote git repo code to the heroku git repo. This will build and deploy the code and give a endpoint URL to communicate.
+7. Push remote git repo code to the heroku git repo. This will build and deploy the code and give a endpoint URL to communicate.
 	> git push heroku main
-7. Add environment variables from setting in the web interface.
-8. Adding an addon for postgresql (free one which will not be free after sometime)
+8. Add environment variables from setting in the web interface.
+9. Adding an addon for postgresql (free one which will not be free after sometime)
 	> heroku addons:create heroku-postgresql:hobby-dev
 
 	List addons being used
 	> heroku addons
-9. Restart the heroku app instance
+10. Restart the heroku app instance
 	> heroku ps:restart
 
-10.  Show Logs 
+11.  Show Logs
 	> heroku logs -t
 
 ## EC2
@@ -44,7 +48,7 @@
 
 	which allows outside postgres connections to communicate.
 8. Edit `/etc/postgresql/14/main/pg_hba.conf` file by updating below lines
-	```none
+	```
 	# Database administrative login by Unix domain socket
 	local   all             postgres                                scram-sha-256
 
@@ -62,3 +66,33 @@
 	host    replication     all             127.0.0.1/32            scram-sha-256
 	host    replication     all             ::1/128                 scram-sha-256
 	```
+### Using gunicorn
+This is a process manager. Create workers and use load balancing.
+
+1. Install gunicorn and some libraries
+	> pip install gunicorn httptools uvloop
+2. Run with `gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8001`
+
+### Running gunicorn as system service
+1. Create a service file
+	```bash
+	[Unit]
+	Description=demo fastapi application
+	After=network.target
+
+	[Service]
+	User=pratik
+	Group=pratik
+	WorkingDirectory=/home/pratik/FastAPI-App
+	Environment="PATH=/home/pratik/FastAPI-App/venv/bin"
+	EnvironmentFile=/home/pratik/.env
+	ExecStart=/home/pratik/FastAPI-App/venv/bin/gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8000
+
+	[Install]
+	WantedBy=multi-user.target
+	```
+2. Add this file to `/etc/systemd/system` with name `demo-fastapi-app.service`.
+3. Run this as a service
+	> sudo systemctl start demo-fastapi-app.service
+4. Enable this service to start at the startup
+	> sudo systemctl enable demo-fastapi-app.service
