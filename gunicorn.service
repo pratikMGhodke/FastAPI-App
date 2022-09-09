@@ -1,0 +1,14 @@
+[Unit]
+Description=demo fastapi application
+After=network.target
+
+[Service]
+User=pratik
+Group=pratik
+WorkingDirectory=/home/pratik/app/src/
+Environment="PATH=/home/pratik/app/venv/bin"
+EnvironmentFile=/home/pratik/.env
+ExecStart=/home/pratik/app/venv/bin/gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8000
+
+[Install]
+WantedBy=multi-user.target
