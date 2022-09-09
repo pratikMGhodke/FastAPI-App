@@ -16,6 +16,7 @@ from app.Models.posts_model import check_if_post_exists
 #                                 DB Operations                                #
 # ---------------------------------------------------------------------------- #
 
+
 def update_vote(vote: VoteRequest, database: Session, current_user: User):
     """
     Update a vote for post
@@ -48,7 +49,8 @@ def update_vote(vote: VoteRequest, database: Session, current_user: User):
     if vote.dir == 1:
         if found_vote:
             raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT, detail="Cannot vote already voted post!"
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Cannot vote already voted post!",
             )
 
         new_vote = Vote(post_id=post_id, user_id=user_id)
@@ -58,7 +60,8 @@ def update_vote(vote: VoteRequest, database: Session, current_user: User):
 
     if not found_vote:
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="Cannot down-vote a not voted this post!"
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Cannot down-vote a not voted this post!",
         )
 
     vote_query.delete(synchronize_session=False)
