@@ -6,10 +6,21 @@ FastAPI API application
 
 # imports
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.Routes import post_routes, user_routes, auth_routes, vote_routes
 
 # Init API
 app = FastAPI()
+
+# CORS Policy
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_header=["*"],
+)
 
 # Register Routes
 app.include_router(post_routes.router)
