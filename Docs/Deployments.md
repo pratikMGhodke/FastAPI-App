@@ -1,5 +1,6 @@
 
 
+
 # Deployments
 
 ## Heroku
@@ -96,3 +97,44 @@ This is a process manager. Create workers and use load balancing.
 	> sudo systemctl start demo-fastapi-app.service
 4. Enable this service to start at the startup
 	> sudo systemctl enable demo-fastapi-app.service
+
+### Nginx
+1. Install nginx
+	> sudo apt install nginx
+2. Strart nginx service
+	> sudo systemctl start nginx
+3. Change default service config for nginx in `/etc/nginx/sites-available`
+	```
+	server_name _;
+	location / {
+            proxy_pass http://localhost:8000;
+            proxy_http_version 1.1;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $http_host;
+            proxy_set_header X-NginX-Proxy true;
+            proxy_redirect off;
+        }
+	```
+4. Restart nginx
+	> sudo systemctl restart nginx
+
+### SSL Certificate
+1. Install certbot
+	> sudo snap install certbot --classic
+2. Config nginx with certbot (auto)
+	> sudo certbot --nginx
+
+### Firewall
+1. Check firewall status
+	> sudo ufw status
+2. Allow traffic
+	> sudo ufw allow http <br>
+	> sudo ufw allow https <br>
+	> sudo ufw allow ssh <br>
+	> sudo ufw allow 5432 <br>
+
+3. Start firewall
+	> sudo ufw enable
