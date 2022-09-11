@@ -5,14 +5,14 @@
 1. Create an account on heroku.
 2. Install heroku in machine.
     > sudo snap install heroku --classic
-3. Login from heorku-cli
+3. Login from heroku-cli
 
     > heroku login
 
     This will present an popup browser tab to confirm the login.
 
 4. Update heroku to the latest version
-    > heorku --update
+    > heroku --update
 5. Add a `Procfile` with below contents which shows heroku how to run the API application.
 
     > web: uvicorn app.main:app --host=0.0.0.0 --port=${PORT:-5000}
@@ -60,7 +60,7 @@
 
 8. Edit `/etc/postgresql/14/main/pg_hba.conf` file by updating below lines
 
-    ```
+    ```none
     # Database administrative login by Unix domain socket
     local   all             postgres                                scram-sha-256
 
@@ -118,10 +118,10 @@ This is a process manager. Create workers and use load balancing.
 
 1. Install nginx
     > sudo apt install nginx
-2. Strart nginx service
+2. Start nginx service
     > sudo systemctl start nginx
 3. Change default service config for nginx in `/etc/nginx/sites-available`
-    ```
+    ```none
     server_name _;
     location / {
             proxy_pass http://localhost:8000;
@@ -160,9 +160,20 @@ This is a process manager. Create workers and use load balancing.
     > sudo ufw enable
 
 
-### Github Actions
+### CI/CD
 
+#### CI - Continuos Integration
+
+#### Github Actions
 see `.github/workflows/build-deploy.yml` for config file
 
 1. Whenever code is pushed(configurable), github actions runs.
 2. Add env variables, from setting>environments>(after creating new env)>add secrets.
+
+### Docker Hub
+1. Register
+2. Account setting > Security > Get that access token!
+3. In github environment secrets, add `DOCKER_HUB_USERNAME` and `DOCKER_HUB_ACCESS_TOKEN`.
+
+#### CD - Continuos Deployment
+1. Deploy code to heroku via git (see `.github/workflows/build-deploy.yml`)
