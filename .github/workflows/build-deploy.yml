@@ -83,6 +83,8 @@ jobs:
   deploy:
     needs: [build]
     runs-on: ubuntu-22.04
+    environment:
+      name: production
     steps:
       - name: Pulling git repo
         uses: actions/checkout@v2
@@ -93,3 +95,14 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
           heroku_email: ${{secrets.HEROKU_EMAIL}}
+
+      - name: Deploying to Ubuntu Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{PROD_HOST}}
+          username: ${{PROD_USERNAME}}
+          password: ${{PROD_PASSWORD}}
+          script: |
+            cd FastAPI-App/
+            git pull
+            sudo systemctl restart demo-fastapi-app.service
