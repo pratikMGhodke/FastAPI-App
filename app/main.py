@@ -42,4 +42,4 @@ async def health():
         str: OK response
     """
     print("[Health-check] Application is running!")
-    return "OK"
+    return "Health OK"
