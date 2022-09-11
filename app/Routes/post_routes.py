@@ -25,6 +25,7 @@ router = APIRouter(prefix="/api/posts", tags=["Posts"])
 @router.get("/", response_model=list[posts_schema.PostResponse])
 def get_posts(
     database: Session = Depends(connect_to_postgres_db),
+    current_user: int = Depends(oauth2.get_current_user),
     limit: int = 10,
     skip: int = 0,
     search: Optional[str] = "",
@@ -35,6 +36,7 @@ def get_posts(
     Args:
         database (Session, optional):
             Postgres db session object. Defaults to Depends(connect_to_postgres_db).
+        current_user (int): Logged in user ID
         limit (int): Number of posts to be shown
         skip (int): Number of posts to be skipped
         search (str, Optional): Search string
@@ -59,6 +61,7 @@ def get_posts(
 def get_post(
     post_id: int,
     database: Session = Depends(connect_to_postgres_db),
+    current_user: int = Depends(oauth2.get_current_user),
 ):
     """
     Return a post content
@@ -68,6 +71,7 @@ def get_post(
 
         database (Session, optional):
             Postgres db session object. Defaults to Depends(connect_to_postgres_db).
+        current_user (int): Logged in user ID
 
     Raises:
         HTTPException: HTTP_404_NOT_FOUND
