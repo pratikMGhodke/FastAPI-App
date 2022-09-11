@@ -51,7 +51,7 @@
 4. Add .env file in the `/home/user`
 5. Add `set -o allexport; source /home/pratik/.env; set +o allexport` to `~/.profile` file.
 6. Install postgresql.
-    > sudo apt install postgresql postgres-contrib
+    > sudo apt install postgresql postgresql-contrib
 7. Edit `/etc/postgresql/14/main/postgresql.conf` file by updating below line
 
     > listen_addresses = '\*' # what IP address(es) to listen on;
