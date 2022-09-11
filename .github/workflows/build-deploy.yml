@@ -99,9 +99,9 @@ jobs:
       - name: Deploying to Ubuntu Server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{PROD_HOST}}
-          username: ${{PROD_USERNAME}}
-          password: ${{PROD_PASSWORD}}
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USERNAME }}
+          password: ${{ secrets.PROD_PASSWORD }}
           script: |
             cd FastAPI-App/
             git pull
