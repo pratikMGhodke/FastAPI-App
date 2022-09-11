@@ -96,13 +96,15 @@ jobs:
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
           heroku_email: ${{secrets.HEROKU_EMAIL}}
 
-      - name: Deploying to Ubuntu Server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.PROD_HOST }}
-          username: ${{ secrets.PROD_USERNAME }}
-          password: ${{ secrets.PROD_PASSWORD }}
-          script: |
-            cd FastAPI-App/
-            git pull
-            echo ${{ secrets.PROD_PASSWORD }} | sudo -S systemctl restart demo-fastapi-app.service
+      # THIS ONE FAILED!
+      # - name: Deploying to Ubuntu Server
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.PROD_HOST }}
+      #     username: ${{ secrets.PROD_USERNAME }}
+      #     password: ${{ secrets.PROD_PASSWORD }}
+      #     script: |
+      #       echo ${{ secrets.PROD_PASSWORD }} | sudo su - pratik
+      #       cd FastAPI-App/
+      #       git pull
+      #       echo ${{ secrets.PROD_PASSWORD }} | sudo -S systemctl restart demo-fastapi-app.service
