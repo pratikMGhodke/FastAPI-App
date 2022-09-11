@@ -17,11 +17,11 @@ EMAIL = "pratik2.user@gmail.com"
 PASSWORD = "secret_password"
 
 
-def test_health(client):
-    """Test health endpoint"""
-    response = client.get("/api/health")
-    assert 200 == response.status_code
-    assert "OK" == response.json()
+# def test_health(client):
+#     """Test health endpoint"""
+#     response = client.get("/api/health")
+#     assert 200 == response.status_code
+#     assert "OK" == response.json()
 
 
 def test_create_user(client):
